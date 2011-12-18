@@ -12,4 +12,4 @@ git commit -m "Built for deployment"
 
 git checkout $currentHead
 
-git push origin gh-pages
+git push -f origin gh-pages
