@@ -1,3 +1,9 @@
+###!
+'Out' game, © 2011 Stéphan 'kosinus' Kochen.
+Made for Ludum Dare 22. Licensed GPLv3, see the LICENSE file.
+###
+
+
 { PI } = Math
 TwoPI = PI * 2
 window.requestAnimationFrame ?=
