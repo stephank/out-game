@@ -10,10 +10,12 @@ window.requestAnimationFrame ?=
   mozRequestAnimationFrame ?
   webkitRequestAnimationFrame ?
   msRequestAnimationFrame
+### FIXME: Not in FF
 window.cancelRequestAnimationFrame ?=
   mozCancelRequestAnimationFrame ?
   webkitCancelRequestAnimationFrame ?
   msCancelRequestAnimationFrame
+###
 
 
 buildCanvas = (options={}) ->
@@ -695,10 +697,12 @@ gameLoop = window.gameLoop =
     @initialize()
     @interval = setInterval @tick, 25
 
+  ### FIXME: Not in FF
   stop: ->
     clearInterval @interval if @interval
     cancelRequestAnimationFrame @frameRequest if @frameRequest
     @interval = @frameRequest = null
+  ###
 
   # Start up a new level.
   loadLevel: (idx) ->
