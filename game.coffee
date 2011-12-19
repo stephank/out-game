@@ -6,16 +6,13 @@ Made for Ludum Dare 22. Licensed GPLv3, see the LICENSE file.
 
 { PI } = Math
 TwoPI = PI * 2
-window.requestAnimationFrame ?=
-  mozRequestAnimationFrame ?
-  webkitRequestAnimationFrame ?
-  msRequestAnimationFrame
-### FIXME: Not in FF
-window.cancelRequestAnimationFrame ?=
-  mozCancelRequestAnimationFrame ?
-  webkitCancelRequestAnimationFrame ?
-  msCancelRequestAnimationFrame
-###
+
+unless window.requestAnimationFrame
+  for prefix in ['moz', 'webkit', 'ms', 'o']
+    if window["#{prefix}RequestAnimationFrame"]
+      window.requestAnimationFrame = window["#{prefix}RequestAnimationFrame"]
+      window.cancelRequestAnimationFrame = window["#{prefix}CancelRequestAnimationFrame"]
+      break
 
 
 buildCanvas = (options={}) ->
@@ -641,8 +638,8 @@ class LevelStructure
 controller =
   initialize: ->
     @up = @down = @left = @right = @action = 0
-    document.onkeydown = @keyDown.bind(this)
-    document.onkeyup = @keyUp.bind(this)
+    document.onkeydown = (e) => @keyDown e
+    document.onkeyup = (e) => @keyUp e
 
   keyDown: (e) ->
     switch e.keyCode
@@ -687,22 +684,17 @@ gameLoop = window.gameLoop =
     state.fsm = 'title'
     state.counter = 0
 
-    @tick = @tick.bind this
-    @frame = @frame.bind this
-
     @initialize = ->
 
   start: ->
     return if @interval
     @initialize()
-    @interval = setInterval @tick, 25
+    @interval = setInterval (=> @tick()), 25
 
-  ### FIXME: Not in FF
   stop: ->
     clearInterval @interval if @interval
-    cancelRequestAnimationFrame @frameRequest if @frameRequest
+    cancelRequestAnimationFrame? @frameRequest if @frameRequest
     @interval = @frameRequest = null
-  ###
 
   # Start up a new level.
   loadLevel: (idx) ->
@@ -765,8 +757,10 @@ gameLoop = window.gameLoop =
         state.counter++
         @nextLevel() if state.counter is 100
 
-    unless @frameRequest
-      @frameRequest = requestAnimationFrame @frame
+    if window.requestAnimationFrame
+      @frameRequest ||= requestAnimationFrame => @frame()
+    else
+      @frame()
 
   # Render a frame.
   frame: ->
