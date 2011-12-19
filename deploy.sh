@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 set -x -e
 
-currentHead=`git symbolic-ref HEAD`
+currentHead=$(git symbolic-ref -q HEAD) ||
+  currentHead=$(git rev-parse HEAD)
+currentHead=${currentHead##refs/heads/}
 
 git checkout -B gh-pages
 cake -c build
