@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "Work in progress",
 
-  "engines": {
-    "node": "0.6"
-  },
   "dependencies": {
     "connect": "1",
     "browserify": "1",
