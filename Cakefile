@@ -10,10 +10,13 @@ option '-c', '--compress', "Enable bundle compression"
 option '-p', '--port', "Port to listen on"
 
 
+compressJs = (src) -> uglify.minify(src).code
+
+
 # Write a compressed bundle for static serving in production.
 task 'build', (options) ->
   b = browserify()
-  b.register 'post', uglify if options.compress
+  b.register 'post', compressJs if options.compress
   b.require main, root: __dirname
   fs.writeFileSync 'game.js', b.bundle()
 
@@ -21,7 +24,7 @@ task 'build', (options) ->
 # Watch and serve using browserify, for easy developent.
 task 'serve', (options) ->
   b = browserify mount: '/game.js'
-  b.register 'post', uglify if options.compress
+  b.register 'post', compressJs if options.compress
   b.require main, root: __dirname, watch: yes
 
   server = connect.createServer()
